@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href= "main.css">
+    <title>COVID-19 Country Cases</title>
+</head>
+
+<body>
+</div>
+    <nav style="height: 80px;">
+        <div class="nav-wrapper">
+            <div>
+                <a>
+                    <h1 class="brand-logo">COVID-19 Country Cases</h1>
+                </a>
+                <a href="index.html">
+                    <h5 style="float: right; padding-top: 10px; padding-right: 30px;">Home</h5>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+ <div class="topnav">
+  <input type="text" placeholder="Search..">
+ </div>
+
+  <div class="row">
+    <div class="containerrow col s4">
+            <div class="collection">
+                <div id="listing">
+                </div>
+            </div>
+      </div>
+  <div class="col s8">
+   <div id="piechart"></div>
+   <p id="result"></p>
+   </div>
+        
+       
+</div>
+     
+     
+
+    
+  
+</div>
+    
+
+    <script>
+        async function getCountryDetail(countrySlug) {
+            //performs http request to the specifed url with the given country slug to get country data then pass it to displayCountryDetail()
+            console.log(`${countrySlug}`);
+            let url = "https://api.covid19api.com/live/country/"
+           url += `${countrySlug}/status/confirmed`;
+            
+            console.log(`${url}`);
+
+            try {
+                let response = await fetch(url);//1. Send http request and get response
+                let country = await response.json();//2. Get data from response
+
+                displayCountryDetail(country);
+                
+             google.charts.load("current", {packages:["corechart"]});
+             google.charts.setOnLoadCallback(drawChart);
+             
+      function drawChart() {
+          let element = country[country.length - 1];
+        var data = google.visualization.arrayToDataTable([
+          ['Countries', 'Confirmed COVID Cases '],
+          ['Cases' ,element.Confirmed], ['Deaths', element.Deaths], ['Recoveries', element.Recovered]
+        ]);
+
+        var options = {
+          title: 'Covid Cases',
+          legend: 'none',
+          pieSliceText: 'label',
+          slices: {  4: {offset: 0.2},
+                    12: {offset: 0.3},
+                    14: {offset: 0.4},
+                    15: {offset: 0.5},
+          },
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      }
+            } catch (e) {
+                console.log(e);//catch and log any errors
+            }
+        }
+
+
+        async function getAllCountries() {
+            //performs a http request to the specified url to get country data then pass it to displayAllCountries()
+            let url = "https://api.covid19api.com/countries";
+            try {
+                let response = await fetch(url);//1. Send http request and get response
+                let result = await response.json();//2. Get data from response
+                displayAllCountries(result);// 3. Do something with the data
+
+            } catch (e) {
+                console.log(e);//catch and log any errors
+            }
+        }
+
+        function displayAllCountries(list) {
+            //Renders a list of countries links to the page 
+            let result = document.querySelector('#listing');
+
+            for (let record of list) {
+                result.innerHTML +=
+                    `<a class = "collection-item"
+                    id="${record.slug}"
+                    name="${record.Country}" 
+                    url="${record.Slug}"
+                    href="#" onclick="getCountryDetail('${record.Slug}')">${record.Country}</a>`;
+            }
+        }
+
+        function displayCountryDetail(country) {
+            //renders details of the specified country onto the page
+
+            document.getElementById(country.Country).href = `#${country.Country}`;
+            let result = document.querySelector('#result');
+
+            for (let record of country) {
+                result.innerHTML = `
+       Country: ${record.Country}<br/>
+       Confirmed Cases: ${record.Confirmed} <br/> 
+       Active Cases: ${record.Active} <br/>
+       Deaths: ${record.Deaths}<br/>
+       Recovered: ${record.Recovered} <br/>`   
+
+        }
+        }
+
+        function search() {
+ 
+            var name = document.getElementById(country.Country).href= `#${country.Country}`;
+            var pattern = name.toLowerCase();
+            var targetId = "";
+ 
+             var divs = document.getElementsByClassName("col-md-2");
+               for (var i = 0; i < divs.length; i++) {
+                  var para = divs[i].getElementsByTagName("p");
+                  var index = para[0].innerText.toLowerCase().indexOf(pattern);
+                     if (index != -1) {
+                       targetId = divs[i].parentNode.id;
+                       document.getElementById(targetId).scrollIntoView();
+                          break;
+                        }
+                }  
+        }
+    
+       getAllCountries();
+
+    </script>
+
+</body>
+
+</html>

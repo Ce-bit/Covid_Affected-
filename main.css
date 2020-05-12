@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:700");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background:white;
+}
+
+#piechart{
+    width: 100%;
+    height: 500px;
+    position:relative;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom: 0;
+    background-color: ;
+}
+
+
+.containerrow {
+    max-height:800px;
+    position: relative;
+    overflow:scroll;
+    text-transform:capitalize;
+    padding:20px;
+    width:300px;
+}
+
+.col{
+    font-size: 20px;
+    position:center; 
+    text-transform:capitalize;
+    text-align: center ;
+    padding-left: 0px;
+}
